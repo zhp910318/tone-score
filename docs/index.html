@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tone Score — free text message tone checker (demo)</title>
+<meta name="description" content="Score a text message for neediness, warmth, confidence, clarity and length fit. Free, runs entirely in your browser — nothing is uploaded. Open-source library demo.">
+<link rel="canonical" href="https://zhp910318.github.io/tone-score/">
+<meta property="og:title" content="Tone Score — text message tone checker">
+<meta property="og:description" content="Five-dimension score for any text you're about to send. Runs in your browser, nothing uploaded.">
+<meta property="og:type" content="website">
+<style>
+  :root { --ink:#2b2320; --muted:#6a5a52; --accent:#b5715c; --bg:#fdf7f4; --card:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:44px 20px 80px; }
+  h1 { font-size:32px; line-height:1.2; margin:0 0 8px; }
+  .sub { color:var(--muted); margin:0 0 26px; }
+  textarea { width:100%; min-height:110px; padding:14px; font-size:16px; font-family:inherit;
+             border:1px solid #e0d5cd; border-radius:10px; background:var(--card); resize:vertical; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  button { padding:12px 20px; font-size:15px; font-weight:600; border:0; border-radius:9px;
+           background:var(--accent); color:#fff; cursor:pointer; }
+  button.ghost { background:#fff; color:var(--accent); border:1px solid #e0d5cd; }
+  .score { margin-top:26px; background:var(--card); border:1px solid #efe6e0; border-radius:14px; padding:22px; }
+  .big { font-size:44px; font-weight:700; line-height:1; }
+  .verdict { color:var(--muted); margin:6px 0 18px; }
+  .dims { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px 22px; }
+  .dim { display:flex; justify-content:space-between; border-bottom:1px solid #f2ece7; padding:6px 0; }
+  .dim b { font-variant-numeric:tabular-nums; }
+  .bar { height:6px; background:#f2ece7; border-radius:3px; overflow:hidden; margin-top:6px; }
+  .bar span { display:block; height:100%; background:var(--accent); }
+  .tips { margin:18px 0 0; padding-left:20px; color:var(--muted); }
+  .note { font-size:13px; color:var(--muted); margin-top:30px; }
+  a { color:var(--accent); }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Text tone score</h1>
+  <p class="sub">Paste a text you're about to send. Scored on neediness, warmth, confidence,
+  clarity and length fit — <strong>entirely in your browser</strong>. Nothing is uploaded or stored.</p>
+
+  <textarea id="t" placeholder="e.g. hey?? are you ignoring me? sorry to just check in again" aria-label="Your text message"></textarea>
+  <div class="row">
+    <button id="go">Score my text</button>
+    <button class="ghost" id="ex">Try an example</button>
+  </div>
+
+  <section class="score hidden" id="out" aria-live="polite">
+    <div class="big" id="composite">—</div>
+    <p class="verdict" id="verdict"></p>
+    <div class="dims" id="dims"></div>
+    <ul class="tips" id="tips"></ul>
+  </section>
+
+  <p class="note">
+    This demo runs the open-source <a href="https://github.com/zhp910318/tone-score">tone-score</a> library
+    (MIT). It is a heuristic — it scores patterns, not meaning, and it is English-only.
+    For a full tool that also drafts replies, see the
+    <a href="https://love-strategist.yixingnet.online/tools/tone-checker">tone checker on Love Strategist</a>.
+  </p>
+</div>
+
+<script type="module">
+import { analyze } from './tone-score.js';
+
+const $ = (id) => document.getElementById(id);
+const LABELS = {
+  neediness: 'Neediness (lower is better)',
+  warmth: 'Warmth',
+  confidence: 'Confidence',
+  clarity: 'Clarity',
+  lengthFit: 'Length fit',
+};
+
+function render(text) {
+  if (!text.trim()) { $('out').classList.add('hidden'); return; }
+  const r = analyze(text);
+  $('composite').textContent = r.composite;
+  $('verdict').textContent = r.verdictEmoji + ' ' + r.verdictText;
+  $('dims').innerHTML = Object.keys(LABELS).map((k) => {
+    const v = r[k];
+    const shown = k === 'neediness' ? v : v;   // neediness 高分=差，条仍按数值显示，标签已说明
+    return `<div><div class="dim"><span>${LABELS[k]}</span><b>${v}</b></div>
+            <div class="bar"><span style="width:${shown}%"></span></div></div>`;
+  }).join('');
+  $('tips').innerHTML = r.tips.map((t) => `<li>${t}</li>`).join('');
+  $('out').classList.remove('hidden');
+}
+
+$('go').addEventListener('click', () => render($('t').value));
+$('ex').addEventListener('click', () => {
+  $('t').value = "hey?? are you ignoring me? sorry to just check in again";
+  render($('t').value);
+});
+$('t').addEventListener('input', () => render($('t').value));
+</script>
+</body>
+</html>
