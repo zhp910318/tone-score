@@ -1,0 +1,37 @@
+{
+  "name": "tone-score",
+  "version": "1.0.0",
+  "description": "Score a text message for neediness, warmth, confidence, clarity and length fit. Zero dependencies, pure functions.",
+  "type": "module",
+  "main": "src/tone-score.mjs",
+  "exports": {
+    ".": "./src/tone-score.mjs"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test.mjs"
+  },
+  "keywords": [
+    "texting",
+    "dating",
+    "relationships",
+    "tone",
+    "sentiment",
+    "communication",
+    "text-analysis",
+    "zero-dependencies"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhp910318/tone-score.git"
+  },
+  "homepage": "https://love-strategist.yixingnet.online/tools/tone-checker",
+  "engines": {
+    "node": ">=18"
+  }
+}
