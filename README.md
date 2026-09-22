@@ -19,6 +19,9 @@ buildTips(r);    // ["Drop the hedges ('maybe', 'if you want'). State it plainly
 analyze(text);   // score + tips in one call
 ```
 
+**Try it in your browser:** <https://zhp910318.github.io/tone-score/> — paste a text, see the five
+dimension scores and tips. Runs client-side; nothing is uploaded.
+
 ## Why this exists
 
 Most tone or sentiment libraries answer "is this positive or negative?". That is the wrong question for a text message between two people who like each other. The failure mode is not negativity — it is **neediness**: reassurance-seeking, hedging, and pressure that makes a message feel like a bill the other person has to pay.
